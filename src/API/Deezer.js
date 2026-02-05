@@ -27,7 +27,8 @@ const Deezer = {
         trackId: song.id,
         trackName: song.title,
         artistName: song.artist.name,
-        collectionName: song.album.title
+        collectionName: song.album.title,
+        preview: song.preview
     }));
 
 

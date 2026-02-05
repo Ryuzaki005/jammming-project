@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DisplaySongs from "./DisplaySongs";
 import SearchBar from "./SearchBar";
 import PlayList from "./Playlist";
@@ -9,9 +9,37 @@ function App(){
     const [songs, setSongs] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [playlist, setPlaylist] = useState([]);
-    // Ajouter un nouveau state
     const [playlistName, setPlaylistName] = useState("Ma Playlist");
     const [isLoading, setIsLoading] = useState(false);
+
+    const [isCurrentlyPlaying, setIsCurrentlyPlaying] = useState(null);
+
+    const audioRef = useRef(null);
+
+    function playPreview(trackId, previewUrl){
+
+
+
+        if(isCurrentlyPlaying === trackId){
+            audioRef.current.pause();
+            setIsCurrentlyPlaying(null);
+            return;
+        }
+        
+        if(audioRef.current){
+            audioRef.current.pause();
+        }
+
+
+        audioRef.current = new Audio(previewUrl);
+        audioRef.current.play();
+        setIsCurrentlyPlaying(trackId);
+
+        audioRef.current.onended = () => {
+            setIsCurrentlyPlaying(null);
+        };
+
+    }
 
     useEffect(() => {
         const savedPlaylistInLocalStorage = localStorage.getItem('jammming-playlist');
@@ -85,7 +113,7 @@ function App(){
             <SearchBar searchTerm={searchTerm} inputChangeHandler={inputChangeHandler} submitHandler={submitHandler}/>
             <div className="twoTabsContainer">
                 {/* Results */}
-                <DisplaySongs songs={songs} isLoading={isLoading} addToPlaylist={addToPlaylist}/>
+                <DisplaySongs songs={songs.filter(song => !playlist.find(p => p.trackId === song.trackId))} isLoading={isLoading} addToPlaylist={addToPlaylist} playPreview={playPreview} currentlyPlaying={isCurrentlyPlaying} />
                 {/* PlayList */}
                 <PlayList playlist={playlist} playlistName={playlistName} setPlaylistName={setPlaylistName} removeFromPlaylist={removeFromPlaylist} savePlaylist={savePlaylist} clearPlaylist={clearPlaylist} />
             </div>

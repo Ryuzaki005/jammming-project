@@ -1,5 +1,5 @@
 
-function DisplaySongs({ isLoading, songs, addToPlaylist}){
+function DisplaySongs({ isLoading, songs, addToPlaylist, playPreview, currentlyPlaying}){
     
     return (
     <>
@@ -12,12 +12,19 @@ function DisplaySongs({ isLoading, songs, addToPlaylist}){
                     <ul>
                         {songs.map((song) => (
                             <li key={song.trackId} className="song-item">
+                                <button 
+                                    className="preview-button"
+                                    onClick={() => playPreview(song.trackId, song.preview)}
+                                >
+                                {currentlyPlaying === song.trackId ? "⏸️" : "▶️"}
+                            </button>
                                 <div className="song-info">
                                     <span className="song-title">{song.trackName}</span>
                                     <div className="song-details">
                                         <span>Artist: </span>{song.artistName} • 
                                         <span> Album: </span>{song.collectionName}
                                     </div>
+                                    
                                 </div>
                                 <button className="add-button" onClick={() =>  addToPlaylist(song)}>+</button>
                             </li>
@@ -28,5 +35,6 @@ function DisplaySongs({ isLoading, songs, addToPlaylist}){
                 }
     </>)
 }
+
 
 export default DisplaySongs;
